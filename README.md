@@ -1,5 +1,5 @@
-# S3 Object Storage 
-An S3 object storage implementation written in HSL
+# S3 Object Storage client
+An S3 object storage client implementation written in HSL
 
 ## Installation
 
