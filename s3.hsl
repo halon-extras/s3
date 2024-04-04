@@ -1,3 +1,5 @@
+import { http_background } from "extras://http-background";
+
 function s3_put($endpoint, $secretkey, $accesskey, $bucket, $name, $fp, $options = [])
 {
     $date = strftime("%a, %d %b %Y %H:%M:%S %z");
