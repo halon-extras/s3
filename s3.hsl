@@ -1,0 +1,54 @@
+function s3_put($endpoint, $secretkey, $accesskey, $bucket, $name, $fp, $options = [])
+{
+    $date = strftime("%a, %d %b %Y %H:%M:%S %z");
+    $tosign = "PUT\n\napplication/octet-stream\n$date\n/$bucket/$name";
+    $signature = hmac_sha1($secretkey, $tosign, ["binary" => true]);
+    $signature = base64_encode($signature);
+    $filesize = $fp->seek(0, "SEEK_END");
+    $fp->seek(0, "SEEK_SET");
+    return http_background($options["http-background"]["id"] ?? "default", "$endpoint/$bucket/$name", [
+        "extended_result" => true,
+        "headers" => [
+            "Date: $date",
+            "Content-Type: application/octet-stream",
+            "Authorization: AWS $accesskey:$signature",
+            "Content-Length: ".$filesize,
+            "Transfer-Encoding: "
+        ],
+        "method" => "PUT"
+    ], $fp);
+}
+
+function s3_get($endpoint, $secretkey, $accesskey, $bucket, $name, $options = [])
+{
+    $date = strftime("%a, %d %b %Y %H:%M:%S %z");
+    $tosign = "GET\n\napplication/octet-stream\n$date\n/$bucket/$name";
+    $signature = hmac_sha1($secretkey, $tosign, ["binary" => true]);
+    $signature = base64_encode($signature);
+    return http_background($options["http-background"]["id"] ?? "default", "$endpoint/$bucket/$name", [
+        "extended_result" => true,
+        "headers" => [
+            "Date: $date",
+            "Content-Type: application/octet-stream",
+            "Authorization: AWS $accesskey:$signature"
+        ],
+        "method" => "GET"
+    ]);
+}
+
+function s3_delete($endpoint, $secretkey, $accesskey, $bucket, $name, $options = [])
+{
+    $date = strftime("%a, %d %b %Y %H:%M:%S %z");
+    $tosign = "DELETE\n\napplication/octet-stream\n$date\n/$bucket/$name";
+    $signature = hmac_sha1($secretkey, $tosign, ["binary" => true]);
+    $signature = base64_encode($signature);
+    return http_background($options["http-background"]["id"] ?? "default", "$endpoint/$bucket/$name", [
+        "extended_result" => true,
+        "headers" => [
+            "Date: $date",
+            "Content-Type: application/octet-stream",
+            "Authorization: AWS $accesskey:$signature"
+        ],
+        "method" => "DELETE"
+    ]);
+}
