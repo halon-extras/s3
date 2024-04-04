@@ -7,7 +7,6 @@ function s3_put($endpoint, $secretkey, $accesskey, $bucket, $name, $fp, $options
     $filesize = $fp->seek(0, "SEEK_END");
     $fp->seek(0, "SEEK_SET");
     return http_background($options["http-background"]["id"] ?? "default", "$endpoint/$bucket/$name", [
-        "extended_result" => true,
         "headers" => [
             "Date: $date",
             "Content-Type: application/octet-stream",
@@ -26,7 +25,6 @@ function s3_get($endpoint, $secretkey, $accesskey, $bucket, $name, $options = []
     $signature = hmac_sha1($secretkey, $tosign, ["binary" => true]);
     $signature = base64_encode($signature);
     return http_background($options["http-background"]["id"] ?? "default", "$endpoint/$bucket/$name", [
-        "extended_result" => true,
         "headers" => [
             "Date: $date",
             "Content-Type: application/octet-stream",
@@ -43,7 +41,6 @@ function s3_delete($endpoint, $secretkey, $accesskey, $bucket, $name, $options =
     $signature = hmac_sha1($secretkey, $tosign, ["binary" => true]);
     $signature = base64_encode($signature);
     return http_background($options["http-background"]["id"] ?? "default", "$endpoint/$bucket/$name", [
-        "extended_result" => true,
         "headers" => [
             "Date: $date",
             "Content-Type: application/octet-stream",
